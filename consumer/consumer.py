@@ -15,11 +15,10 @@ app = Celery(
     broker=broker,
     backend=backend,
     broker_connection_retry_on_startup=True,
-    task_soft_time_limit=2,
 )
 
 
-@app.task
+@app.task(soft_time_limit=2)
 def addition(first: int, second: int) -> int:
     try:
         return first + second
