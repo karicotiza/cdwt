@@ -1,0 +1,81 @@
+name: cdwt
+
+services:
+  rabbitmq:
+    container_name: cdwt_rabbitmq
+    image: rabbitmq:3.13.3-management
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  redis:
+    container_name: cdwt_redis
+    image: redis/redis-stack-server:7.2.0-v11
+    env_file:
+      - .env
+    command: redis-server --requirepass ${REDIS_DEFAULT_PASS}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+
+  consumer_01:
+    container_name: cdwt_consumer_01
+    build: 
+      dockerfile: Dockerfile
+      context: './consumer/'
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  consumer_02:
+    container_name: cdwt_consumer_02
+    build: 
+      dockerfile: Dockerfile
+      context: './consumer/'
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  
+  consumer_03:
+    container_name: cdwt_consumer_03
+    build: 
+      dockerfile: Dockerfile
+      context: './consumer/'
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  consumer_04:
+    container_name: cdwt_consumer_04
+    build: 
+      dockerfile: Dockerfile
+      context: './consumer/'
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
