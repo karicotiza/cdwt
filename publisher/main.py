@@ -1,6 +1,7 @@
 from os import environ
 from random import randint
 from celery import Celery  # type: ignore
+from celery.result import AsyncResult  # type: ignore
 
 
 user: str = environ.get('RABBITMQ_DEFAULT_USER', '')
@@ -13,10 +14,12 @@ backend: str = f'redis://:{redis_password}@localhost:6379'
 app = Celery('tasks', broker=broker, backend=backend)
 
 
+def send_task(task_name: str, **kwargs) -> AsyncResult:
+    return app.send_task(task_name, kwargs=kwargs)
+
+
 def addition(first: int, second: int) -> int:
-    return app.send_task(
-        'consumer.addition', kwargs={'first': first, 'second': second},
-    ).get()
+    return send_task('consumer.addition', first=first, second=second).get()
 
 
 for _ in range(10000):
