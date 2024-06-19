@@ -7,4 +7,4 @@ RUN python -m pip install redis==5.0.6
 
 COPY consumer.py .
 
-ENTRYPOINT ["celery", "-A", "consumer", "worker", "-l" , "INFO", "--concurrency", "12", "--uid", "1"]
+ENTRYPOINT ["celery", "-A", "consumer", "worker", "--concurrency", "1", "--uid", "1"]
