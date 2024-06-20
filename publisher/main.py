@@ -8,8 +8,7 @@ user: str = environ.get('RABBITMQ_DEFAULT_USER', '')
 rabbit_mq_password: str = environ.get('RABBITMQ_DEFAULT_PASS', '')
 vhost: str = environ.get('RABBITMQ_DEFAULT_VHOST', '')
 broker: str = f'amqp://{user}:{rabbit_mq_password}@localhost:5672/{vhost}'
-redis_password = environ.get('REDIS_DEFAULT_PASS', '')
-backend: str = f'redis://:{redis_password}@localhost:6379'
+backend: str = f'rpc://{user}:{rabbit_mq_password}@localhost:5672/{vhost}'
 
 app = Celery('tasks', broker=broker, backend=backend)
 
@@ -22,7 +21,7 @@ def addition(first: int, second: int) -> int:
     return send_task('consumer.addition', first=first, second=second).get()
 
 
-for _ in range(10000):
+for _ in range(1_000):
     first: int = randint(0, 100)
     second: int = randint(0, 100)
     result: int = addition(first, second)

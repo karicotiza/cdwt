@@ -6,9 +6,9 @@ from celery.exceptions import SoftTimeLimitExceeded  # type: ignore
 user: str = environ.get('RABBITMQ_DEFAULT_USER', '')
 password: str = environ.get('RABBITMQ_DEFAULT_PASS', '')
 vhost: str = environ.get('RABBITMQ_DEFAULT_VHOST', '')
-broker: str = f'pyamqp://{user}:{password}@rabbitmq:5672/{vhost}'
+broker: str = f'amqp://{user}:{password}@rabbitmq:5672/{vhost}'
 redis_password = environ.get('REDIS_DEFAULT_PASS', '')
-backend: str = f'redis://:{redis_password}@redis:6379'
+backend: str = f'rpc://{user}:{password}@localhost:5672/{vhost}'
 
 app = Celery(
     'tasks',
